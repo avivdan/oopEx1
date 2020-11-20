@@ -115,6 +115,7 @@ public class WGraph_DS implements weighted_graph, java.io.Serializable{
     private HashMap<Integer, node_info> G;
     private int Edges = 0;
     private HashMap<Integer,HashSet<Integer>> Neighbors;
+    private int MC = 0;
 
     public WGraph_DS(WGraph_DS g) {
         this.G = new HashMap<Integer, node_info>();
@@ -132,6 +133,7 @@ public class WGraph_DS implements weighted_graph, java.io.Serializable{
         }
         //new
         this.Edges = g.Edges;
+        this.MC = 0;
     }
 
     public WGraph_DS(){
@@ -142,6 +144,7 @@ public class WGraph_DS implements weighted_graph, java.io.Serializable{
         this.Neighbors = n;
         //new
         this.Edges = 0;
+        this.MC = 0;
     }
     /**
      * return the node_data by the node_id,
@@ -199,11 +202,14 @@ public class WGraph_DS implements weighted_graph, java.io.Serializable{
     public void addNode(int key) {
         NodeInfo n = new NodeInfo();
         n.Key = key;
-        if(!this.G.containsKey(key))
+        if(!this.G.containsKey(key)){
             this.G.put(key,n);
+            this.MC++;
+        }
         if(!Neighbors.containsKey(key)){//2 lines above alike
-            HashSet<Integer> f = new HashSet<Integer>();//delete this
+            HashSet<Integer> f = new HashSet<Integer>();
             this.Neighbors.put(key,f);
+            this.MC++;
         }
     }
 
@@ -226,6 +232,7 @@ public class WGraph_DS implements weighted_graph, java.io.Serializable{
                     this.Edges++;
                     this.Neighbors.get(node1).add(node2);//syntax of adding neighbor to the hashset of the hashmap.
                     this.Neighbors.get(node2).add(node1);//same
+                    this.MC++;
                 }
             }
         }
@@ -277,9 +284,11 @@ public class WGraph_DS implements weighted_graph, java.io.Serializable{
                 //need to remove neighbor and edge, bothsides.
                 if (hasEdge(key, node.getKey())){
                     this.removeEdge(key,node.getKey());
+                    this.MC++;
                     //find me in removeEdge method
                 }
             }
+            this.MC++;
             return this.G.remove(key);
         }
         return null;
@@ -300,11 +309,13 @@ public class WGraph_DS implements weighted_graph, java.io.Serializable{
                 this.Neighbors.get(node1).remove(node2);//remove from neighbors
                 this.Neighbors.get(node2).remove(node1);//remove from neighbors
                 this.Edges--;
+                this.MC++;
             }else if(this.G.get(node2).hasEdge(node1)){
                 this.G.get(node2).removeEdge(node1);
                 this.Neighbors.get(node1).remove(node2);//remove from neighbors
                 this.Neighbors.get(node2).remove(node1);//remove from neighbors
                 this.Edges--;
+                this.MC++;
             }
         }
     }
@@ -339,6 +350,6 @@ public class WGraph_DS implements weighted_graph, java.io.Serializable{
      */
     @Override
     public int getMC() {
-        return 0;
+        return this.MC;
     }
 }
